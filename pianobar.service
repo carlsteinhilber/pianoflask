@@ -1,0 +1,15 @@
+[Unit]
+Description=pianobar
+After=network.target
+
+[Service]
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/bin/pianobar
+WorkingDirectory=/home/pi/pianoflask
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target

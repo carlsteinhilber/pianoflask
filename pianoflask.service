@@ -1,0 +1,15 @@
+[Unit]
+Description=PianoFlask
+After=pianobar.service
+Requires=network-online.target
+
+[Service]
+ExecStartPre=/bin/sleep 30
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/pianoflask/
+ExecStart=/usr/bin/python3 /home/pi/pianoflask/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

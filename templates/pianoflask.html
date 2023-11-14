@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>PianoFlask</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto:wght@900&display=swap" rel="stylesheet">    
+        
+    <!--- link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" --->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+
+    <style>
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  transform-style: preserve-3d;
+}
+
+*:focus {
+  outline: none !important;
+}
+
+::-moz-selection {
+  background: none;
+}
+
+::selection {
+  background: none;
+}
+
+a {
+  cursor: pointer;
+}
+
+body, html {
+    height: 100%;
+    margin:0;
+    padding:0;
+}
+
+hr {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(11, 11, 11, 0.5);
+}
+
+body {
+  color: #0B0B0B;
+  font-family: 'Roboto Condensed', sans-serif;    
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+}
+
+.background {
+  background: white;
+}
+#backgroundcoverart {
+    background: url("{{nowplaying.image}}") center center/cover;
+}
+.background, .background:before, .background:after, .background div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+}
+.background:before {
+  content: "";
+  
+  filter: blur(2px);
+}
+.background div {
+  background: #483D8B;
+  miSx-blend-mode:darken;
+  miSx-blend-mode:screen;
+  mix-blend-mode:multiply;
+}
+.background:after {
+  content: "";
+  background: rgba(0, 0, 0, 0.15);
+}
+.player-container {
+    position:absolute;
+    top:20px;
+    top:20px;
+}
+    
+.player {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 320px;
+}
+.player.playlist .front {
+  z-index: -1;
+  opacity: 0;
+}
+.player, .front {
+  will-change: transform;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+}
+
+.front {
+  transition: all 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 0 15px rgba(123, 22, 40, 0.2);
+}
+
+
+.art {
+  border-radius: 2px 2px 0 0;
+  display: block;
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  width: 100%;
+}
+.controls a {
+  display: block;
+}
+.controls a.skip {
+  width: 90px;
+  height: 25px;
+}
+.controls a.play {
+  width: 90px;
+  height: 60px;
+}
+.controls a.play .material-symbols-outlined {
+  font-size: 90px;
+}
+.controls a.skip .material-symbols-outlined {
+  font-size: 50px;
+}
+.controls.top {
+  justify-content: space-around;
+  padding: 12px;
+}
+.controls.top a {
+  transition: all 250ms ease-out;
+  will-change: transform;
+}
+.controls.top a:hover, .controls.top a:focus {
+  transition: all 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: scale(1.1);
+}
+
+.controls.top a:active {
+  transform: scale(1);
+}
+.controls.bottom {
+  justify-content: space-between;
+  padding: 18px 12px 12px;
+}
+.controls.bottom a {
+  width: 40px;
+  height: 40px;
+}
+
+.meta {
+  text-align: center;
+}
+.meta .info {
+  padding: 12px;
+}
+.meta h1 {
+  font-size: 20px;
+  font-weight: 300;
+  margin-bottom: 6px;
+}
+.meta h2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.meta h4 {
+  font-size: 12px;
+  font-weight: 500;
+    margin-bottom: 0;
+}
+
+.material-symbols-outlined {
+  font-size:40px;
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 200,
+  'GRAD' 0,
+  'opsz' 24
+}
+.station {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 7px 14px;
+}
+
+.station label {
+    font-size:0.7em;
+    padding:0;
+    width:100%;
+}   
+.station select {
+    font-family: 'Roboto Condensed', sans-serif; 
+    font-size: 1.9em;
+    width:100%;
+}    
+    
+.station select option {
+    font-family: 'Roboto Condensed', sans-serif; 
+    width:100%;
+}  
+.controls.bottom .material-symbols-outlined.heart-0 {
+  color:#000;
+}
+
+.controls.bottom .material-symbols-outlined.heart-1,
+.controls.bottom .material-symbols-outlined.heart-2, 
+.controls.bottom .material-symbols-outlined.heart-3, 
+.controls.bottom .material-symbols-outlined.heart-4, 
+.controls.bottom .material-symbols-outlined.heart-5 {
+  color: red;
+}
+
+@media only screen and (max-height: 510px) {
+  .container {
+    transform-origin: center center;
+    transform: scale(0.75);
+  }
+}
+@media only screen and (min-width: 640px) {
+  .with-hover .player {
+    transition: all 500ms ease-out;
+  }
+  .with-hover .player:hover {
+    transition: all 1000ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .player {
+    will-change: transform;
+  }
+  .player:hover {
+    transform: translateZ(60px);
+  }
+  .player.playlist .front {
+    transform: rotateY(180deg);
+  }
+  .player.playlist .front * {
+    opacity: 0;
+  }
+}
+
+      </style>
+</head>
+
+<body>
+
+    <main class="with-hover">
+        <div id="backgroundcoverart" class='background'>
+          <div></div>
+        </div>
+        <div class='container player-container'>
+          <div class='player'>
+      
+            <div class='front'>
+              <img id="coverart" class='art' src='{{nowplaying.image}}'>
+           <div class="station">
+               <label>Station:
+               <select id="stationSelect">   
+                {% for station in stations %}
+                {% if station.name|length >0 %}
+                    {% if station.name == nowplaying.station %}
+                        <option value="{{station.id}}" selected>{{station.name}}</option>
+                    {% else %}
+                        <option value="{{station.id}}">{{station.name}}</option>
+                    {% endif %}
+                {% endif %}
+                {% endfor %}
+                </select>
+              </label>
+          </div>
+              <div class='meta'>
+                <div class='controls top'>
+                  <a class='rewind skip'>
+                  </a>
+                  <a id="playButton" class='play'>
+                    <span class="material-symbols-outlined">pause</span>
+                  </a>
+                  <a id="skipButton" class='forward skip'>
+                    <span class="material-symbols-outlined">fast_forward</span>
+                  </a>
+                </div>
+                <div class='info'>
+                  <h1 id="track">{{nowplaying.track}}</h1>
+                  <h2 id="artist">{{nowplaying.artist}}</h2>
+                  <h4 id="album">{{nowplaying.album}}</h4>
+                </div>
+                <div class='controls bottom'>
+                  <a id="banButton">
+                    <span class="material-symbols-outlined">heart_broken</span>
+                  </a>
+                  <a id="freezeButton">
+                    <span class="material-symbols-outlined">calendar_clock</span>
+                  </a>
+                  <a id="favoriteButton">
+                    <span class="material-symbols-outlined heart-{{nowplaying.rating}}">favorite</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+</div>
+
+
+
+    <!--- p>Turn on JS console to view socket messages</p>
+    <p>Pianobar is running {{pianobarrunning}}</p>
+
+    <p id="rating">{{nowplaying.rating}}</p --->
+
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+   integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" integrity="sha512-zoJXRvW2gC8Z0Xo3lBbao5+AS3g6YWr5ztKqaicua11xHo+AvE1b0lT9ODgrHTmNUxeCw0Ry4BGRYZfXu70weg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+
+var namespace = '/pianoflask';
+
+console.log("SOCKET CREATE:");
+connection_path = location.protocol + '//' + document.domain + ':' + location.port + namespace
+console.log(connection_path);
+var socket = io.connect(connection_path);
+console.log(socket);
+
+$("#stationSelect").on("change",function(event){
+  chosenStation = $(this).val();
+  console.log(chosenStation);
+  socket.emit('send_fifo', {command:"s", id:chosenStation});
+});
+
+$("#favoriteButton").on("click", function(event){
+    socket.emit('send_fifo', {command:"+"});
+});
+
+$("#freezeButton").on("click", function(event){
+    socket.emit('send_fifo', {command:"t"});
+});
+
+$("#banButton").on("click", function(event){
+    socket.emit('send_fifo', {command:"-"});
+});
+
+$("#skipButton").on("click", function(event){
+    socket.emit('send_fifo', {command:"n"});
+});
+
+$("#playButton").on("click", function(event){
+    socket.emit('send_fifo', {command:"p"});
+});
+
+socket.on('set_now_playing', function(msg) {
+    console.log("set_now_playing")
+    console.log(msg);
+
+    $("#artist").html(msg.artist);
+    $("#track").html(msg.track);
+    $("#album").html(msg.album);
+
+    $('#coverart').attr("src",msg.image);
+    $('#backgroundcoverart').css('background-image', "url('" + msg.image + "')");
+});
+
+socket.on('file_event', function(msg) {
+    console.log("file_event")
+    console.log(msg);
+    console.log("msg.nowplaying");
+    console.log(msg.nowplaying);
+    if(msg.nowplaying){
+        socket.emit('get_now_playing');
+    }
+});
+
+socket.on('done_loading', function(msg) {
+    console.log("done_loading");
+    console.log(msg);
+});
+
+socket.on('pianoflask_response', function(msg) {
+    console.log("pianoflask_response");
+    console.log(msg);
+});
+
+/*
+setTimeout(function() {
+    console.log("trying to send file check");
+    socket.emit('check_files', {data:"checkfiles"});
+}, 1000);
+*/
+
+setInterval(function() {
+    // console.log("trying to send file check");
+    socket.emit('check_for_updates', {data:"check_for_updates"});
+}, 2000);
+
+
+</script>
+</html>
