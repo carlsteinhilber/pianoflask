@@ -2,7 +2,7 @@
 A lightweight, flask-based UI for pianobar
 
 # The whys
-I have a Raspberry Pi - connected to a Xantech multizone amplifier - that I use to pipe my Pandora stations throughout the house. Long ago I had installed PianoBar - the wonderful console pandora.com music player (https://6xq.net/pianobar/) - to stream my Pandora stations, and had followed several online guides to also install PatioBar web-based UI to control PianoBar from my phone (https://github.com/kylejohnson/Patiobar). But I was never really happy with the solution. PatioBar, with it's NodeJS/React dependencies, seemed overly "heavy" for a Raspberry Pi (a fact beared out by the fact that it would continually crash my Pi) and the UI looked like an early '90's webpage.
+I have a Raspberry Pi - connected to a Xantech multizone amplifier - that I use to pipe my Pandora stations throughout the house. Long ago I had installed PianoBar - the wonderful console pandora.com music player (https://6xq.net/pianobar/) - to stream my Pandora stations, and had followed several online guides to also install PatioBar web-based UI to control PianoBar from my phone (https://github.com/kylejohnson/Patiobar). But I was never really happy with the solution. PatioBar, with it's NodeJS/React dependencies, seemed overly "heavy" for a Raspberry Pi (beared out by the fact that it would continually crash my Pi) and the UI looked like an early '90's webpage.
 
 So I tinkered to try to build a similar, but much more managible solution using the much lighter Flask framework.
 
