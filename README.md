@@ -20,7 +20,7 @@ There are several online tutorials to install PianoBar/PatioBar, but the basic s
 ```
 pi@raspberrypi:~ sudo raspi-config
 ```
-  -  Go to Advanced, then Expand File System
+  - Go to Advanced, then Expand File System
 - You will likely be prompted to reboot, select 'Yes'
 - Once the Pi has restarted and is back online, connect again, then update
 ```
@@ -32,8 +32,8 @@ pi@raspberrypi:~ sudo apt-get upgrade
 ```
 pi@raspberrypi:~ python -V
 ```
-  -  The system should display a version equal to or higher than 3.9
-  -  If not, Google how to install a more recent Python version
+  - The system should display a version equal to or higher than 3.9
+  - If not, Google how to install a more recent Python version
 - You will likely need to install Python 3 Pip
 ```
 pi@raspberrypi:~ sudo apt-get install python3-pip
@@ -50,8 +50,8 @@ pi@raspberrypi:~ sudo apt install screen
 ```
 pi@raspberrypi:~ pianobar
 ```
-  -  PianoBar will ask for your username/email address and password to your Pandora account
-  -  Next, it should list all of your current Pandora stations, and prompt you to select one to start playing
+  - PianoBar will ask for your username/email address and password to your Pandora account
+  - Next, it should list all of your current Pandora stations, and prompt you to select one to start playing
 - I have a HiFi DAC hat on my Pi which PianoBar did not immediately recognize, so I did not hear any sound. I had to do some configuration based on some documentation specific to my particular hat (for me, it was a HiFiBerry DAC Pro+, so I followed the instructions here: https://www.hifiberry.com/docs/software/configuring-linux-3-18-x/)
 - Once configured correctly, I was able to hear the track playing, and control PianoBar from the commandline using the hotkeys described here: https://linux.die.net/man/1/pianobar
 
