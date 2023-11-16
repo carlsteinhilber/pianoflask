@@ -96,6 +96,10 @@ pi@raspberrypi:~ sudo chmod 755 ~/pianoflask/eventcmd.sh
 ```
 pi@raspberrypi:~ sudo mkfifo "/home/pi/.config/pianobar/ctl"
 ```
+- Finally, install one library that is not in the standard Raspberry distribution
+```
+pi@raspberrypi:~ pip install psutil
+```
 - Copy the two .service files to the system directory so that PianoBar and PianoFlask both start when the Pi is booting
 ```
 pi@raspberrypi:~ sudo cp pianobar.service /lib/systemd/system/
