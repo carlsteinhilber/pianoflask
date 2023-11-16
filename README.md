@@ -102,8 +102,8 @@ pi@raspberrypi:~ pip install psutil
 ```
 - Copy the two .service files to the system directory so that PianoBar and PianoFlask both start when the Pi is booting
 ```
-pi@raspberrypi:~ sudo cp pianobar.service /lib/systemd/system/
-pi@raspberrypi:~ sudo cp pianoflask.service /lib/systemd/system/
+pi@raspberrypi:~ sudo cp ~/pianoflask/pianobar.service /lib/systemd/system/
+pi@raspberrypi:~ sudo cp ~/pianoflask/pianoflask.service /lib/systemd/system/
 ```
 - Now hook both of the services up
 ```
