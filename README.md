@@ -169,7 +169,7 @@ Once the Pi has restarted and back online, if your speakers/headphones are still
 If everything has worked correctly, Piano*Flask* should have started automatically as well
 - you should be able to point a web browser on a device/computer on the same network to the Pi's network address, and a nice UI should appear that allows you to control playback of your Pandora tracks.
 ```
-[http://<name of your pi>.local:5000](http://pianoflask.local:5000)
+http://pianoflask.local:5000
 ```
 > (if you named your Pi something other than "pianoflask" while you were flashing the SD card, replace "pianoflask" in the link above with whatever name you gave your Pi)
 
