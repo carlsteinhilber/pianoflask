@@ -129,7 +129,7 @@ sudo nano ~/.config/pianobar/config
 - Edit the *user* and *password* lines to match your Pandora.com login credentials
 - Update the *autostart_station* line to include the ID of the station you want PianoBar to always start on when the system reboots
   - you can determine the station ID by visiting https://pandora.com, clicking on one of your stations - or create a new one - and then copying everything after the last backslash '\'.
-  - ex: if the page for your chosen station is https://www.pandora.com/station/play/**86840530020870280**, then the station ID is '86840530020870280'
+  - ex: if the page for your chosen station is https://www.pandora.com/station/play/86840530020870280, then the station ID is '86840530020870280'
 
 - Save the config file (if you're using nano, **CTRL-O** to save, then **CTRL-X** to exit)
 
