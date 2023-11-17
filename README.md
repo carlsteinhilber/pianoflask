@@ -18,9 +18,9 @@ PianoFlask utilizes the same eventcmd solution as PatioBar (in fact, it was lift
   - Before flashing, bring up the advanced options using **Ctrl + Shift + X**:
     -  Under *General*
         - tick the checkbox next to "Set hostname" and give your Pi a name (this will be the easiest way to access the UI online, so name it something you'll remember, ex: "pianoflask")
-      - tick the checkbox next to "Set username and password - leave Username set to "pi", but set a unique password you can remember
-    -  Under *Service*
-      - tick the checkbox next to "Enable SSH", and leave it set to "Use password authentication"
+        - tick the checkbox next to "Set username and password - leave Username set to "pi", but set a unique password you can remember
+      -  Under *Service*
+        - tick the checkbox next to "Enable SSH", and leave it set to "Use password authentication"
 
 - Connect your Pi to the network (hardwired is recommended, but WiFi is an option... just configure on the *General* tab in the Imager, as above) and power it on
 - SSH into the Pi using PuTTY or other utility
