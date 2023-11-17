@@ -297,7 +297,7 @@ main {
               <img id="coverart" class='art' src='{{nowplaying.image}}'>
            <div class="station">
                <label>Station:
-               <select id="stationSelect">   
+               <select id="stationSelect" data-station="{{nowplaying.station}}">   
                 {% for station in stations %}
                 {% if station.name|length >0 %}
                     {% if station.name == nowplaying.station %}
@@ -314,9 +314,15 @@ main {
                 <div class='controls top'>
                   <a class='rewind skip'>
                   </a>
-                  <a id="playButton" class='play'>
+                  {% if pianobarpaused %}
+                  <a id="playButton" class='play' data-mode="play">
+                    <span class="material-symbols-outlined">play_arrow</span>
+                  </a>
+                  {% else %}
+                  <a id="playButton" class='play' data-mode="pause">
                     <span class="material-symbols-outlined">pause</span>
                   </a>
+                  {% endif %}
                   <a id="skipButton" class='forward skip'>
                     <span class="material-symbols-outlined">fast_forward</span>
                   </a>
@@ -373,8 +379,11 @@ console.log(socket);
 
 $("#stationSelect").on("change",function(event){
   chosenStation = $(this).val();
+  previousStation = $(this).data("station");
   console.log(chosenStation);
-  socket.emit('send_fifo', {command:"s", id:chosenStation});
+  if(chosenStation != previousStation) {
+    socket.emit('send_fifo', {command:"s", id:chosenStation});
+  }
 });
 
 $("#favoriteButton").on("click", function(event){
@@ -394,7 +403,14 @@ $("#skipButton").on("click", function(event){
 });
 
 $("#playButton").on("click", function(event){
-    socket.emit('send_fifo', {command:"p"});
+    var currentMode = $(this).data("mode");
+    if( currentMode=="pause" ){
+      socket.emit('send_fifo', {command:"S"});
+    } else {
+      socket.emit('send_fifo', {command:"P"});
+    }
+
+
 });
 
 socket.on('set_now_playing', function(msg) {
@@ -407,6 +423,16 @@ socket.on('set_now_playing', function(msg) {
 
     $('#coverart').attr("src",msg.image);
     $('#backgroundcoverart').css('background-image', "url('" + msg.image + "')");
+    $("#stationSelect option").filter(function() {
+        //may want to use $.trim in here
+        return $(this).text() == msg.station;
+    }).prop('selected', true);
+    $("#stationSelect").data("station",msg.station);
+    if(msg.rating > 0){
+      $("#favoriteButton .material-symbols-outlined").removeClass("heart-0").removeClass("heart-1").addClass("heart-1");
+    } else {
+      $("#favoriteButton .material-symbols-outlined").removeClass("heart-0").removeClass("heart-1").addClass("heart-0");
+    }
 });
 
 socket.on('file_event', function(msg) {
@@ -424,9 +450,42 @@ socket.on('done_loading', function(msg) {
     console.log(msg);
 });
 
-socket.on('pianoflask_response', function(msg) {
-    console.log("pianoflask_response");
+socket.on('fifo_successfull', function(msg) {
+    console.log("fifo_successfull");
     console.log(msg);
+    var commandChar = "";
+    var commandId = 0;
+    if(msg && msg.command && msg.command.length > 0){
+      commandChar = msg.command.charAt(0);
+      if(msg.id && msg.id.length > 0){
+        commandId = msg.id;
+      }
+    }
+    console.log(commandChar);
+    switch( commandChar ){
+      case "S":
+        console.log("pause");
+        $("#playButton").data("mode","play");
+        $("#playButton .material-symbols-outlined").html("play_arrow");
+        break;
+      case "P":
+        console.log("resume");
+        $("#playButton").data("mode","pause");
+        $("#playButton .material-symbols-outlined").html("pause");
+        break;
+      case "s":
+        console.log("change station");
+
+      case "+":
+        console.log("love track");
+        $("#favoriteButton .material-symbols-outlined").removeClass("heart-0").removeClass("heart-1").addClass("heart-1");
+        break;
+      default:
+        console.log("default");
+        break;
+
+
+    }
 });
 
 /*
@@ -436,11 +495,12 @@ setTimeout(function() {
 }, 1000);
 */
 
-setInterval(function() {
-    // console.log("trying to send file check");
-    socket.emit('check_for_updates', {data:"check_for_updates"});
-}, 2000);
-
+$(document).ready(function() {
+  setInterval(function() {
+      // console.log("trying to send file check");
+      socket.emit('check_for_updates', {data:"check_for_updates"});
+  }, 2000);
+});
 
 </script>
 </html>

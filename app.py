@@ -64,6 +64,9 @@ class Pianobar:
         self.nowplaying = {'filepath':(self.configpath + "/nowplaying"),'lastmodified':0}
         self.stations = {'filepath':(self.configpath + "/stations"),'lastmodified':0}
         self.running = False
+        # TODO: need a better solution, here... if piano flask is started while pianobar is
+        # puased, this will be out of sync
+        self.paused = False 
 
     def isRunning(self):
         # Iterate over the all the running process
@@ -101,7 +104,13 @@ class Pianobar:
             fileStatus["stations"] = True
             self.stations["lastmodified"] = stationsTS
         return fileStatus
-       
+
+    def getPaused(self):
+        return self.paused
+
+    def setPaused(self,paused):
+        self.paused = paused
+
     def getStations(self):
         stationsProcessed = []
         file1 = open(self.stations["filepath"], "r+")
@@ -142,6 +151,7 @@ class Pianobar:
 
 
 pianobar = Pianobar()
+pianobar.start()
 
 # goodbye() - register an exit event
 @atexit.register
@@ -151,17 +161,18 @@ def goodbye():
 # pianoflask_get_now_playing() - get the now playing info (current song/track)
 @socketio.on('get_now_playing', namespace=appnamespace)
 def pianoflask_get_now_playing():
-    print("CALL pianoflask_get_now_playing")
+    debug_log("CALL pianoflask_get_now_playing")
     nowPlaying = pianobar.getNowPlaying()
-    emit('set_now_playing', nowPlaying)
+    emit('set_now_playing', nowPlaying, broadcast=True)
 
 
 # pianoflask_check_for_updates() - check if either the now playing or station info has been updated
 @socketio.on('check_for_updates', namespace=appnamespace)
 def pianoflask_check_for_updates(message):
-    print("CALL pianoflask_check_for_updates")
+    debug_log("CALL pianoflask_check_for_updates")
     fileUpdates = pianobar.checkForUpdates()
     if fileUpdates["nowplaying"] or fileUpdates["stations"]:
+        # I think it will be bad for this next emit to be "broadcast" to all clients
         emit('file_event', fileUpdates)
         
 
@@ -175,51 +186,38 @@ def pianoflask_send_fifo(message):
         command = message["command"] + str(int(message["id"])) + "\n"
     debug_log(command)
     if pianobar.writeFifo(command):
-        emit('fifo_successfull', command=message["command"])
-
-
-@socketio.on('print_fifo', namespace=appnamespace)
-def pianoflask_print_fifo(message):
-    debug_log("CALL pianoflask_print_fifo")
-    # command = str(message["command"]).split('|||')
-
-    fullcommand = message["command"] + str(int(message["id"])) + "\n"
-    if writeMyFifo(fullcommand):
-        emit('fifo_successfull', command=message["command"])
-
-
-    debug_log(fullcommand)
-    # piano.playPause()
-    # f writeMyFifo(command):
-    #     emit('fifo_successfull', command=command)
-
+        if command == "S":
+            pianobar.setPaused(True)
+        if command == "P":
+            pianobar.setPaused(False)
+        emit('fifo_successfull', {"command":command}, broadcast=True)
 
 
 
 # pianoflask_connect() - client has connected to socket
 @socketio.on('connect', namespace=appnamespace)
 def pianoflask_connect():
-    debug_log("CALL pianoflask_connect")
+    print("CALL pianoflask_connect")
 
 # pianoflask_disconnect() - client has disconnected from socket
 @socketio.on('disconnect', namespace=appnamespace)
 def pianoflask_disconnect():
-    debug_log("CALL pianoflask_disconnect")
+    print("CALL pianoflask_disconnect")
 
 # pianoflask_disconnect_request() - client has requested to disconnect
 # had to create this stub to solve some issues calling disconnect directly (TODO: research direct disconnect issues)
 @socketio.on('disconnect_request', namespace=appnamespace)
 def pianoflask_disconnect_request(message):
-    debug_log("CALL pianoflask_disconnect_request")
+    print("CALL pianoflask_disconnect_request")
 
 
 @app.route('/')
 def index():
-    print("/")
+    debug_log("/")
     time.sleep(1)
-    pianobar.start()
-
+    
     isRunning = pianobar.isRunning()
+    isPaused = pianobar.getPaused()
 
     if isRunning:
         nowPlaying = pianobar.getNowPlaying()
@@ -227,6 +225,7 @@ def index():
 
         return render_template('pianoflask.html',
                            pianobarrunning=isRunning,
+                           pianobarpaused = isPaused,
                            nowplaying=nowPlaying,
                            stations=stations,
                            async_mode=socketio.async_mode)

@@ -2,6 +2,7 @@ user = <your Pandora.com user name - typically your email address>
 password = <the password of your Pandora account>
 autostart_station = <the id of the radio station you wish to start with: ex - 4035504413229705282>
 audio_quality = high
+buffer_seconds = 60
 event_command = /home/pi/pianoflask/eventcmd.sh
 fifo = /home/pi/.config/pianobar/ctl
 volume = +5
