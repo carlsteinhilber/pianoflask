@@ -1,4 +1,4 @@
-# pianoflask
+# PianoFlask
 A lightweight, flask-based UI for pianobar
 
 # The whys
@@ -10,118 +10,171 @@ So I tinkered to try to build a similar, but much more managible solution using 
 PianoFlask utilizes the same eventcmd solution as PatioBar (in fact, it was lifted directly from that project), and a very similar FiFO CTL pipe to control and receive event notification from PianoBar. This all drives Flask's SocketIO library, and presents a clean, modern webpage based on the lightweight Pico CSS framework.
 
 # Installation
-There are several online tutorials to install PianoBar/PatioBar, but the basic steps are these:
-- Flash a fresh MicroSD card with a new version of Raspberry Pi OS using the Raspberry Pi Imager - I used "Raspbery Pi OS (Legacy) Lite" for my Pi 3B, no need to install the full version with a desktop
-  - Before flashing, bring up the advanced options using **Ctrl + Shift + X** and under *Service*, Enable SSH
-  - Name the Pi on the first tab of the settings (I just named mine pianoflask)
-- Connect your Pi to the network (hardwired is recommended, but WiFi is an option... just configure it in the advanced options in the Imager) and power it on
+
+## Preparing the SD card
+
+- Flash a fresh MicroSD card with a new version of Raspberry Pi OS using the Raspberry Pi Imager
+  - I used "Raspbery Pi OS (Legacy) Lite" for my Pi 3B, no need to install the full version with a desktop
+  - Before flashing, bring up the advanced options using **Ctrl + Shift + X**:
+    -  Under *General*
+      - tick the checkbox next to "Set hostname" and give your Pi a name (this will be the easiest way to access the UI online, so name it something you'll remember, ex: "pianoflask")
+      - tick the checkbox next to "Set username and password - leave Username set to "pi", but set a unique password you can remember
+    -  Under *Service*
+      - tick the checkbox next to "Enable SSH", and leave it set to "Use password authentication"
+
+- Connect your Pi to the network (hardwired is recommended, but WiFi is an option... just configure on the *General* tab in the Imager, as above) and power it on
 - SSH into the Pi using PuTTY or other utility
+
+(all SSH instructions assume you are logged in as the "pi" user, and are in the "pi" user's home directory... type `cd ~` at any time if you're unsure, you should see a prompt like `pi@pianoflask:~` when you're logged in)
+
 - Expand the Pi's filesystem (this may not be necessary anymore, but it's become habit for me every time I start with a fresh Pi):
 ```
-pi@raspberrypi:~ sudo raspi-config
+sudo raspi-config
 ```
-  - Go to Advanced, then Expand File System
+> Go to Advanced, then Expand File System
+
 - You will likely be prompted to reboot, select 'Yes'
 - Once the Pi has restarted and is back online, connect again, then update
 ```
-pi@raspberrypi:~ sudo apt-get update
-pi@raspberrypi:~ sudo apt-get upgrade
+sudo apt-get update && sudo apt-get upgrade
 ```
+> this should take several minutes
+
 - Reboot again
+
 - Now check the Python version already installed on the Pi
 ```
-pi@raspberrypi:~ python -V
+python -V
 ```
-  - The system should display a version equal to or higher than 3.9
+> Python 3.9.2
+- The system should display a version equal to or higher than 3.9
   - If not, Google how to install a more recent Python version
+
 - You will likely need to install Python 3 Pip
 ```
-pi@raspberrypi:~ sudo apt-get install python3-pip
+sudo apt-get install python3-pip
 ```
-- From here, PianoBar is available via the standard apt repositories, so installation is easy
+
+## Installing PianoBar
+
+There are several online tutorials to install PianoBar/PatioBar, but the basic steps are these:
+
+- PianoBar is available via the standard Raspberry Pi apt repositories, so installation is easy
 ```
-pi@raspberrypi:~ sudo apt install pianobar
+sudo apt install pianobar
 ```
-- We also want to install Screen so pianobar can run without a screen attached
+
+That's it! At this point, if your Pi is not already hooked up to speakers or a headset, do that now.
+Then try running PianoBar to ensure it installed correctly
 ```
-pi@raspberrypi:~ sudo apt install screen
+pianobar
 ```
-- Now try running PianoBar to ensure it installed correctly
-```
-pi@raspberrypi:~ pianobar
-```
-  - PianoBar will ask for your username/email address and password to your Pandora account
-  - Next, it should list all of your current Pandora stations, and prompt you to select one to start playing
-- I have a HiFi DAC hat on my Pi which PianoBar did not immediately recognize, so I did not hear any sound. I had to do some configuration based on some documentation specific to my particular hat (for me, it was a HiFiBerry DAC Pro+, so I followed the instructions here: https://www.hifiberry.com/docs/software/configuring-linux-3-18-x/)
-- Once configured correctly, I was able to hear the track playing, and control PianoBar from the commandline using the hotkeys described here: https://linux.die.net/man/1/pianobar
+- PianoBar will ask for your username/email address and password to your Pandora account
+- Next, it should list all of your current Pandora stations, and prompt you to select one by typing the station number from the list
+- PianoBar will take a few seconds, tell you which track it has selected, and then begin playing
+  - I have a HiFi DAC hat on my Pi which PianoBar did not immediately recognize, so I did not hear any sound. I had to do some configuration based on some documentation specific to my particular hat (for me, it was a HiFiBerry DAC Pro+, so I followed the instructions here: https://www.hifiberry.com/docs/software/configuring-linux-3-18-x/)
+- check that you can
+  - toggle the pausing of the track either by hitting the 'p' key or the spacebar
+  - change stations by hitting the 's' key
+  - quit pianobar either with the 'q' or '/' keys
+  - additional commandline controls using the hotkeys described here: https://linux.die.net/man/1/pianobar
+
+## Installing PianoFlask
 
 Alright, now that PianoBar is installed and functioning properly, time to hook up PianoFlask
+
 - Install Flask
 ```
-pi@raspberrypi:~ pip install flask
+pip install flask
 ```
-Add the local bin directory to the system's PATH, as described during the installation
+- Add the local bin directory to the system's PATH, as described during the installation
 ```
-pi@raspberrypi:~ export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 ```
-- Now install Flask Sockets and the eventlet library
+- Now install Flask Sockets, the eventlet library, and psutils
 ```
-pi@raspberrypi:~ pip install flask-socketio
-pi@raspberrypi:~ pip install eventlet
+pip install flask-socketio
+pip install eventlet
+pip install psutil
 ```
-- Now copy the PianoFlask project to the Pi (either via the git client, or by downloading the zip archive from this repository)
-- The project should be copied to a new subdirectory in the Pi's home directory (/home/pi/pianoflask/)
-- Create a new config directory for PianoBar
+You'll need to grab PianoFlask from this repository somehow. You can do this in one of several ways:
+- You can use git
 ```
-pi@raspberrypi:~ mkdir -p ~/.config/pianobar
+sudo apt install git
+git clone https://github.com/carlsteinhilber/pianoflask.git`
 ```
-- Edit the sample PianoBar config file that is included in the pianoflask directory
+- You can pull the zip file down to your Pi, and then unzip the files into a new pianoflask directory
 ```
-pi@raspberrypi:~ sudo nano ~/pianoflask/config.sample
-```
-  - Edit the *user* and *password* lines to match your Pandora.com login credentials
-  - Update the *autostart_station* line to include the ID of the station you want PianoBar to always start on when the system reboots (you can determine the station ID by visiting https://pandora.com, clicking on one of your stations - or create a new one - and then copying everything after the last backslash '\'. ex: if the page for your chosen station is https://www.pandora.com/station/play/**86840530020870280**, then the station ID is '86840530020870280')
-  - Save the config file (if you're using nano, **CTRL-O** to save, then **CTRL-X** to exit)
-- Copy the config file to the PianoBar config directory, as, simply, 'config'
-```
-pi@raspberrypi:~ sudo cp ~/pianoflask/config.sample ~/.config/pianobar/config
+wget https://github.com/carlsteinhilber/pianoflask/archive/refs/heads/main.zip
+mkdir pianoflask
+unzip main.zip  && mv pianoflask-main/* pianoflask
 ```
 
-Awesome! PianoFlask should now be installed and read, just a few more housekeeping things to get PianoFlask talking to PianoBar properly.
-- First, make the eventcmd.sh file in the pianoflask directory executable
+## Hook PianoFlask up to PianoBar
+
+Awesome! PianoFlask should now be installed and ready, just a few more housekeeping things to get PianoFlask talking to PianoBar properly.
+
+- Create a new config directory for PianoBar
 ```
-pi@raspberrypi:~ sudo chmod 755 ~/pianoflask/eventcmd.sh
+mkdir -p ~/.config/pianobar
 ```
-- Create a FiFo pipe to control PianoBar
+- Copy the sample config file from the PianoFlask directory into the new config directory
 ```
-pi@raspberrypi:~ sudo mkfifo "/home/pi/.config/pianobar/ctl"
+sudo cp ~/pianoflask/config.sample ~/.config/pianobar/config
 ```
-- Finally, install one library that is not in the standard Raspberry distribution
+- Now edit the config file (I will be using Nano as my editor, you can use whatever you are most familiar with)
 ```
-pi@raspberrypi:~ pip install psutil
+sudo nano ~/.config/pianobar/config
 ```
+- Edit the *user* and *password* lines to match your Pandora.com login credentials
+- Update the *autostart_station* line to include the ID of the station you want PianoBar to always start on when the system reboots
+  - you can determine the station ID by visiting https://pandora.com, clicking on one of your stations - or create a new one - and then copying everything after the last backslash '\'.
+  - ex: if the page for your chosen station is https://www.pandora.com/station/play/**86840530020870280**, then the station ID is '86840530020870280'
+
+- Save the config file (if you're using nano, **CTRL-O** to save, then **CTRL-X** to exit)
+
+- make the eventcmd.sh file in the pianoflask directory executable
+```
+sudo chmod 755 ~/pianoflask/eventcmd.sh
+```
+- Create a FiFo pipe to control PianoBar, and make it writable
+```
+sudo mkfifo "/home/pi/.config/pianobar/ctl"
+sudo chmod 766 ~/.config/pianobar/ctl
+```
+
 - Copy the two .service files to the system directory so that PianoBar and PianoFlask both start when the Pi is booting
 ```
-pi@raspberrypi:~ sudo cp ~/pianoflask/pianobar.service /lib/systemd/system/
-pi@raspberrypi:~ sudo cp ~/pianoflask/pianoflask.service /lib/systemd/system/
+sudo cp ~/pianoflask/pianobar.service /lib/systemd/system/
+sudo cp ~/pianoflask/pianoflask.service /lib/systemd/system/
 ```
 - Now hook both of the services up
 ```
-pi@raspberrypi:~ sudo systemctl daemon-reload
-pi@raspberrypi:~ sudo systemctl enable pianobar
-pi@raspberrypi:~ sudo systemctl enable pianoflask
-pi@raspberrypi:~ sudo systemctl start pianobar
-pi@raspberrypi:~ sudo systemctl start pianoflask
+sudo systemctl daemon-reload
+sudo systemctl enable pianobar
+sudo systemctl enable pianoflask
+sudo systemctl start pianobar
+sudo systemctl start pianoflask
 ```
 - Give the system one last good reboot
 ```
-pi@raspberrypi:~ sudo reboot
+sudo reboot
 ```
-- Now, once the Pi is restarted and back online, you should be able to point a web browser on a device/computer on the same network to the Pi's network address, and a nice UI should appear that allows you to control playback of your Pandora tracks.
+
+## Using PianoFlask
+
+Once the Pi has restarted and back online, if your speakers/headphones are still connected, you will hear PianoBar start up without any prompts, and begin playing a track from the station you specified in the ~/.config/pianobar/config file as the *autostart_station*
+- If you do not hear a track start to play, you may want to double confirm this *autostart_station* setting in the config file
+
+If everything has worked correctly, Piano*Flask* should have started automatically as well
+- you should be able to point a web browser on a device/computer on the same network to the Pi's network address, and a nice UI should appear that allows you to control playback of your Pandora tracks.
 ```
-http://<name of your pi>.local:5000 (so, if you named your Pi "pianoflask" like I did above, you would go to http://pianoflask.local:5000
+[http://<name of your pi>.local:5000](http://pianoflask.local:5000)
 ```
-  - if that doesn't work, you may need to use the IP address of the Pi (something like http://192.168.1.100:5000) depending on how your network router is set up. If that's the case, you'll want to set up a reserved IP address for your Pi, which, unfortunately, given how many different ways there is to do this on different routers, is beyond the scope of this guide. You'll want to check the documentation for your specific router.
+> (if you named your Pi something other than "pianoflask" while you were flashing the SD card, replace "pianoflask" in the link above with whatever name you gave your Pi)
+
+- if that doesn't work, you may need to use the IP address of the Pi (something like http://192.168.1.100:5000) depending on how your network router is set up. If that's the case, you'll want to set up a reserved IP address for your Pi, which, unfortunately, given how many different ways there are to do this on different routers, is beyond the scope of this guide. You'll want to check the documentation for your specific router.
+
 - Once you have the UI up in a web browser
   - Check that all your stations appear in the station dropdown
   - Check that you can pause and play the track
