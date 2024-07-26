@@ -5,6 +5,7 @@ A lightweight, flask-based UI for pianobar
 - I've migrated the backend event system to Python so that events can bubble up through the websockets, making the web interface more responsive and stable.
 - I've also added track duration and elapsed time, and given the web interface a general overhaul
 
+
 # The whys
 I have a Raspberry Pi - connected to a Xantech multizone amplifier controlled by my PyXantech project (https://github.com/carlsteinhilber/pyxantech) - that I use to pipe my Pandora stations throughout the house. Long ago I had installed PianoBar - the wonderful console pandora.com music player (https://6xq.net/pianobar/) - to stream my Pandora stations, and had followed several online guides to also install PatioBar web-based UI to control PianoBar from my phone (https://github.com/kylejohnson/Patiobar). But I was never really happy with the solution. PatioBar, with it's NodeJS/React dependencies, seemed overly "heavy" for a Raspberry Pi (beared out by the fact that it would continually crash my Pi) and the UI looked like an early '90's webpage.
 
@@ -109,11 +110,7 @@ sudo apt install git
 git clone https://github.com/carlsteinhilber/pianoflask.git`
 ```
 - You can pull the zip file down to your Pi, and then unzip the files into a new pianoflask directory
-```
-wget https://github.com/carlsteinhilber/pianoflask/archive/refs/heads/main.zip
-mkdir pianoflask
-unzip main.zip  && mv pianoflask-main/* pianoflask
-```
+
 
 ## Hook PianoFlask up to PianoBar
 
