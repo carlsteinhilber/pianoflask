@@ -13,7 +13,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     
 
-    <style>
+    <!--- 
+    https://www.billboard.com/wp-content/uploads/2022/03/50.-Taylor-Swift-%E2%80%981989-2014-album-art-billboard-1240.jpg?w=768
+-
+http://mediaserver-cont-dc6-2-v4v6.pandora.com/images/93/29/d6/aa/19c24bc49cbb1249e846ad6a/1080W_1080H.jpg
+--->
+    
+<style>
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -79,7 +85,7 @@ main {
   background: white;
 }
 #backgroundcoverart {
-    background: url("{{nowplaying.image}}") center center/cover;
+    background: url("{{trackinfo.coverArt}}") center center/cover;
 }
 .background, .background:before, .background:after, .background div {
   position: absolute;
@@ -148,16 +154,40 @@ main {
   align-content: center;
   width: 100%;
 }
+
+
+
+.controls.top .material-symbols-outlined{
+    background-color:#f4f731;
+    border-radius: 50%;
+    boSx-shadow: 8px 8px 2px 1px rgba(255, 255, 255, .8); // rgba(244, 247, 49, .8);
+    box-shadow: 4px 4px 2px 1px rgba(0, 0, 0, .8); // rgba(244, 247, 49, .8);
+    color:black;
+    fWilter: invert(1);
+    mix-blend-mode: difference;
+    opacity:85%;
+}
 .controls a {
   display: block;
+  height:fit-content;
 }
 .controls a.skip {
-  width: 90px;
   height: 25px;
+  maSrgin-left:45px;
+  wiSdth: 90px;
 }
+.controls a.skip, .controls a.forward  {
+  height: 40px;
+  maSrgin-left:45px;
+  width: 40px;
+}
+
+
+
 .controls a.play {
-  width: 90px;
-  height: 60px;
+  heiSght: 90px;
+  overSflow: hidden;
+  wiSdth: 90px;
 }
 .controls a.play .material-symbols-outlined {
   font-size: 90px;
@@ -166,7 +196,10 @@ main {
   font-size: 50px;
 }
 .controls.top {
+  align-items: baseline;
   justify-content: space-around;
+  position:absolute;
+  top:207px;
   padding: 12px;
 }
 .controls.top a {
@@ -183,12 +216,18 @@ main {
 }
 .controls.bottom {
   justify-content: space-between;
-  padding: 18px 12px 12px;
+  padding: 5px 12px 12px;
 }
 .controls.bottom a {
   width: 40px;
   height: 40px;
 }
+
+.controls.loading {
+  position:absolute;
+  top:-500px;
+}
+
 
 .meta {
   text-align: center;
@@ -196,19 +235,22 @@ main {
 .meta .info {
   padding: 12px;
 }
-.meta h1 {
+h1 {
   font-size: 20px;
   font-weight: 300;
+  height:30px;
   margin-bottom: 6px;
 }
-.meta h2 {
+h2 {
   font-size: 14px;
   font-weight: 500;
+  height:20px;
 }
-.meta h4 {
+h4 {
   font-size: 12px;
   font-weight: 500;
-    margin-bottom: 0;
+  height:16px;
+  margin-bottom: 0;
 }
 
 .material-symbols-outlined {
@@ -220,20 +262,25 @@ main {
   'opsz' 24
 }
 .station {
-    display: flex;
+    display: block;
     align-items: center;
     width: 100%;
-    padding: 7px 14px;
+    padding: 0px;
 }
 
 .station label {
+    color:black;
     font-size:0.7em;
     padding:0;
     width:100%;
+    filter: invert(1);
+    mix-blend-mode: difference;
 }   
 .station select {
+  background-color:white;
+  color:black;
     font-family: 'Roboto Condensed', sans-serif; 
-    font-size: 1.9em;
+    font-size: 1.2em;
     width:100%;
 }    
     
@@ -252,6 +299,144 @@ main {
 .controls.bottom .material-symbols-outlined.heart-5 {
   color: red;
 }
+
+#progressbar {
+    background-color:white;
+    backgroSund-color: black;
+    border: 1px solid black;
+    display:block;
+    height:22px;
+    maSrgin:0px 9px 0px 2px;
+    padding:0;
+    position:relative;
+    width:100%;
+}
+
+#progSSressbar .background {
+  background-color: white;
+  filter: invert(1);
+    mix-blend-mode: difference;
+  
+  position:absolute;
+  top:0;
+  left:0;
+          
+}
+
+#progressbar #bar {
+    background-color:  /* the progress color */
+    linear-gradient(#fff8,#fff0),
+    repeating-linear-gradient(135deg,#0003 0 10px,#0000 0 20px),
+    #f4f731; 
+  --backgroSund: lightgrey; /* the background color */
+
+    display:block;
+  colSor: black;
+  height: 23px;
+  width: 100%;
+  bacSground-color: black;
+  position:absolute;
+  left:0px;
+  top:0px;
+  filter: invert(1);
+    mix-blend-mode: difference;
+ 
+}
+#progressbar .pbtext {
+    color: black;
+    display:inline-block;
+    font-size: 12px;
+    position: absolute;
+    top:4px;
+}
+
+#progressbar #elapsed {
+    left:10px;
+    text-align: left;
+}
+#progressbar #duration {
+    left:auto;
+    right:10px;
+    text-align: right;
+}
+
+.offscreen {
+    background-color:white;
+    color: white;
+    display:inline-block;
+    position:absolute;
+    top:-500px;
+    white-space: nowrap;
+}
+
+.songinfo {
+    height: 1.3em;
+    left:0;
+    margin:0;
+    overflow:hidden;
+    position:relative;
+    width:100%;
+}
+.songinfo div {
+    display:inline-block;
+    left:0;
+    overflow:hidden;
+    text-align: center;
+    text-decoration: none;
+    width:100%;
+    white-space:nowrap;
+}
+.songinfo div.scrollable {
+    text-align:left;
+    text-overflow: ellipsis;
+}
+.songinfo div.scrolling {
+    overflow:visible;
+    position:relative;
+    text-align:left;
+}
+ 
+progress[value] {
+    --origcolor:  /* the progress color */
+    linear-gradient(rgba(255, 255, 255, 0.533),#fff0),
+    repeating-linear-gradient(135deg,#0003 0 10px,#0000 0 20px),
+    rgb(244, 247, 49); 
+    --color:  /* the progress color */
+    
+    repeating-linear-gradient(135deg,#0003 0 10px,#0000 0 20px),
+    #f4f731; 
+  --background: black; /* the background color */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  appearance: none;
+  background: var(--background);
+  border: none;
+  border-radius: 0;
+  height:20px;
+  margin: 0;
+  padding:0;
+  width: 100%;
+
+  filter: invert(1);
+    mix-blend-mode: difference;
+
+}
+progress[value]::-webkit-progress-bar {
+  border-radius: 0em;
+  background: var(--background);
+}
+progress[value]::-webkit-progress-value {
+  border-radius: 0em;
+  background: var(--color);
+}
+progress[value]::-moz-progress-bar {
+  border-radius: 0em;
+  background: var(--color);
+}
+
+
+
 
 @media only screen and (max-height: 510px) {
   .container {
@@ -281,82 +466,86 @@ main {
   }
 }
 
+
       </style>
 </head>
 
 <body>
+    <h1 id="trackContent" class="offscreen">{{trackinfo.title}}</h1>
+    <h2 id="artistContent" class="offscreen">{{trackinfo.artist}}</h2>
+    <h4 id="albumContent" class="offscreen">{{trackinfo.album}}</h4>
 
     <main class="with-hover">
         <div id="backgroundcoverart" class='background'>
-          <div></div>
+            <div></div>
         </div>
         <div class='container player-container'>
-          <div class='player'>
-      
-            <div class='front'>
-              <img id="coverart" class='art' src='{{nowplaying.image}}'>
-           <div class="station">
-               <label>Station:
-               <select id="stationSelect" data-station="{{nowplaying.station}}">   
-                {% for station in stations %}
-                {% if station.name|length >0 %}
-                    {% if station.name == nowplaying.station %}
-                        <option value="{{station.id}}" selected>{{station.name}}</option>
-                    {% else %}
-                        <option value="{{station.id}}">{{station.name}}</option>
+            <div class='player'>
+                <div class="station">
+                    <label>Station:</label>
+                    <select id="selectStation" data-station="{{trackinfo.stationName}}">   
+                    {% for station in stationlist %}
+                    {% if station.name|length >0 %}
+                        {% if station.name == trackinfo.stationName %}
+                            <option value="{{station.id}}" selected>{{station.name}}</option>
+                        {% else %}
+                            <option value="{{station.id}}">{{station.name}}</option>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-                {% endfor %}
-                </select>
-              </label>
-          </div>
-              <div class='meta'>
-                <div class='controls top'>
-                  <a class='rewind skip'>
-                  </a>
-                  {% if pianobarpaused %}
-                  <a id="playButton" class='play' data-mode="play">
-                    <span class="material-symbols-outlined">play_arrow</span>
-                  </a>
-                  {% else %}
-                  <a id="playButton" class='play' data-mode="pause">
-                    <span class="material-symbols-outlined">pause</span>
-                  </a>
-                  {% endif %}
-                  <a id="skipButton" class='forward skip'>
-                    <span class="material-symbols-outlined">fast_forward</span>
-                  </a>
-                </div>
-                <div class='info'>
-                  <h1 id="track">{{nowplaying.track}}</h1>
-                  <h2 id="artist">{{nowplaying.artist}}</h2>
-                  <h4 id="album">{{nowplaying.album}}</h4>
-                </div>
-                <div class='controls bottom'>
-                  <a id="banButton">
-                    <span class="material-symbols-outlined">heart_broken</span>
-                  </a>
-                  <a id="freezeButton">
-                    <span class="material-symbols-outlined">calendar_clock</span>
-                  </a>
-                  <a id="favoriteButton">
-                    <span class="material-symbols-outlined heart-{{nowplaying.rating}}">favorite</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+                    {% endfor %}
+                    </select>
+                </div><!-- #station -->   
+                <div class='front'>
+                    <img id="coverart" class='art' src='{{trackinfo.coverArt}}' />
+                    <div class='controls top loading'>
+                        <a class='rewind skip'></a>
+                        
+                        {% if pianobarpaused == true %}
+                        <a id="buttonPlayPause" class='play' data-mode="play">
+                            <span class="material-symbols-outlined">play_arrow</span>
+                        </a>
+                        {% else %}
+                        <a id="buttonPlayPause" class='play' data-mode="pause">
+                            <span class="material-symbols-outlined">pause</span>
+                        </a>
+                        {% endif %}
+                        
+                        <a id="buttonSongnext" class='forward'>
+                        <span class="material-symbols-outlined">fast_forward</span>
+                        </a>
+                    </div><!-- .controls .top -->
 
-</div>
+                    <div class='meta'>
+                        <div id="progressbar" data-started="{{trackinfo.started}}" data-duration={{progress.durationSec}} data-elapsed={{progress.elapsedSec}} data-paused={{pianobarpaused}} data-pausedduration={{progress.pausedDuration}}>
+                            <span id="elapsed" class="pbtext">{{progress.elapsed}}</span>
+                            <span id="duration" class="pbtext">{{progress.duration}}</span>
+                            <!---div id="bar">&nbsp;</div ---><!-- #bar -->
+                            <progress id="trackelapsed" max="{{progress.durationSec}}" value="{{progress.elapsedSec}}">{{progress.percent}}</progress>
+                        </div><!-- progressbar -->
+                        
+                        <div class='info'>
+                            <h1 id="track" class="songinfo"><div class="static">{{trackinfo.title}}</div></h1>
+                            <h2 id="artist" class="songinfo"><div class="static">{{trackinfo.artist}}</div></h2>
+                            <h4 id="album" class="songinfo"><div class="static">{{trackinfo.album}}</div></h4>
+                        </div><!-- #info -->
+                        <div class='controls bottom loading'>
+                            <a id="butttonSongban">
+                                <span class="material-symbols-outlined">thumb_down</span>
+                            </a>
+                            <a id="buttonSongtired">
+                                <span class="material-symbols-outlined">calendar_clock</span>
+                            </a>
+                            <a id="buttonSonglove">
+                                <span class="material-symbols-outlined heart-{{trackinfo.rating}}">thumb_up</span>
+                            </a>
+                        </div><!-- .controls .bottom -->
+                    </div><!-- #meta -->
+                </div><!-- #front -->
+            </div><!-- #player -->
+        </div><!-- .player-container -->
+    </main>
 
-
-
-    <!--- p>Turn on JS console to view socket messages</p>
-    <p>Pianobar is running {{pianobarrunning}}</p>
-
-    <p id="rating">{{nowplaying.rating}}</p --->
+<!--- /div --->
 
 
 </body>
@@ -369,89 +558,183 @@ main {
 
 <script>
 
-var namespace = '/pianoflask';
+const SCROLLABLE = 'scrollable';
+const SCROLLING = 'scrolling';
+const STATIC = 'static';
+
+/*
+    HELPER FUNCTIONS 
+*/
+function padZero(v) {
+  return (v < 10) ? "0" + v : v;
+}
+
+function sToTime(t) {
+  return padZero(parseInt((t / (60 * 60)) % 24)) + ":" +
+         padZero(parseInt((t / (60)) % 60)) + ":" + 
+         padZero(parseInt((t) % 60));
+}
+
+function setScrollable( segment, scrollstatus ){
+  console.log("setting "+segment+" set to "+scrollstatus)
+  $("#" + segment + " div").removeClass(STATIC).removeClass(SCROLLABLE).removeClass(SCROLLING).addClass(scrollstatus);
+}
+
+function scrollTitle( segment ){
+  var titleContent = $('#' + segment + 'Content');
+  var titleDisplay = $('#' + segment);
+  var titleContainer = $('#' + segment + ' div');
+
+  if( titleContainer.hasClass(SCROLLABLE) ){
+    console.log("start animation");
+    setScrollable(segment, SCROLLING);
+    maxScroll = parseInt(titleDisplay.width() - titleContent.width());
+    titleContainer.animate({ "left": (""+maxScroll+"px") }, 5000, function() {
+      setTimeout(function() {
+          // get the fonts a second to load, then check the initial widths of text fields
+          if( titleContainer.hasClass(SCROLLING) ){
+            setScrollable(segment, SCROLLABLE);
+            titleContainer.css('left', 0);
+          }
+      }, 1000);
+      console.log("animation complete");
+    });
+  }
+}
+
+/*
+  check if any of the text field - artist, title or album - exceed the width of
+  the interface, and if so set up scrolling animation
+*/
+function checkTextWidth( segment ){
+    if( $('#' + segment + 'Content').width() > $('#' + segment).width() ){
+        console.log('the '+segment+' needs scrolling - adding the scrolling class');
+        setScrollable(segment, SCROLLABLE);
+    } else {
+        console.log('the '+segment+' does not need scrolling - removing the scrolling class');
+        setScrollable(segment, STATIC);
+    }
+}
+
+// pianobar has changed tracks, update the interface with new song info
+function setSongInfo(songinfo){
+  artistDisplay = $("#artist div");
+  trackDisplay = $("#track div");
+  albumDisplay = $("#album div");
+
+  artistDisplay.stop();
+  trackDisplay.stop();
+  albumDisplay.stop();
+  artistDisplay.html(songinfo.artist);
+  trackDisplay.html(songinfo.title);
+  albumDisplay.html(songinfo.album);
+
+  
+  $("#artistContent").html(songinfo.artist);
+  $("#trackContent").html(songinfo.title);
+  $("#albumContent").html(songinfo.album);
+
+  var progressElem = $("#progressbar");
+  progressElem.data("started",songinfo.started);
+  progressElem.data("duration",songinfo.songDuration);
+  progressElem.data("pausedduration",0);
+  progressElem.data('elapsed',0);
+
+  setScrollable('artist', STATIC);
+  setScrollable('track', STATIC);
+  setScrollable('album', STATIC);
+
+  // setElapsed();
+  checkTextWidth('artist');
+  checkTextWidth('track');
+  checkTextWidth('album');
+
+  $('#coverart').attr("src",songinfo.coverArt);
+  $('#backgroundcoverart').css('background-image', "url('" + songinfo.coverArt + "')");
+  $("#selectStation option").filter(function() {
+      //may want to use $.trim in here
+      return $(this).text() == songinfo.stationName;
+  }).prop('selected', true);
+  $("#selectStation").data("station",songinfo.stationName);
+  if(songinfo.rating > 0){
+    $("#buttonSonglove .material-symbols-outlined").removeClass("heart-0").removeClass("heart-1").addClass("heart-1");
+  } else {
+    $("#buttonSonglove .material-symbols-outlined").removeClass("heart-0").removeClass("heart-1").addClass("heart-0");
+  }
+
+}
+
 
 console.log("SOCKET CREATE:");
-connection_path = location.protocol + '//' + document.domain + ':' + location.port + namespace
+connection_path = location.protocol + '//' + document.domain + ':' + location.port
 console.log(connection_path);
 var socket = io.connect(connection_path);
 console.log(socket);
 
-$("#stationSelect").on("change",function(event){
+/* INTERFACE ELEMENT EVENTS */
+$("#buttonPlayPause").on("click", function(event){
+    var currentMode = $(this).data("mode");
+    if( currentMode=="pause" ){
+      // $("#progressbar").data("paused",true);
+      socket.emit('pause', {command:"S"});
+    } else {
+      // $("#progressbar").data("paused",false);
+      socket.emit('resume', {command:"P"});
+    }
+});
+
+$("#buttonSonglove").on("click", function(event){
+    socket.emit('songlove', {command:"+"});
+});
+
+$("#buttonSongtired").on("click", function(event){
+    socket.emit('songtired', {command:"t"});
+});
+
+$("#buttonSongban").on("click", function(event){
+    socket.emit('songban', {command:"-"});
+});
+
+$("#buttonSongnext").on("click", function(event){
+    console.log("next song");
+    socket.emit('songnext', {command:"n"});
+});
+
+$("#selectStation").on("change",function(event){
   chosenStation = $(this).val();
-  previousStation = $(this).data("station");
+  previousStation = $(this).data("stationName");
   console.log(chosenStation);
   if(chosenStation != previousStation) {
-    socket.emit('send_fifo', {command:"s", id:chosenStation});
+    socket.emit('stationchange', {command:"s", id:chosenStation});
   }
 });
 
-$("#favoriteButton").on("click", function(event){
-    socket.emit('send_fifo', {command:"+"});
+
+socket.on('updateprogress', function(progress) {
+    $("#trackelapsed").attr("max", progress["durationSec"]);
+    $("#trackelapsed").attr("value", progress["elapsedSec"]);
+    $("#trackelapsed").html( progress["percent"] );
+
+    $("#elapsed").html( progress["elapsed"] );
+    $("#duration").html( progress["duration"] );
 });
 
-$("#freezeButton").on("click", function(event){
-    socket.emit('send_fifo', {command:"t"});
-});
-
-$("#banButton").on("click", function(event){
-    socket.emit('send_fifo', {command:"-"});
-});
-
-$("#skipButton").on("click", function(event){
-    socket.emit('send_fifo', {command:"n"});
-});
-
-$("#playButton").on("click", function(event){
-    var currentMode = $(this).data("mode");
-    if( currentMode=="pause" ){
-      socket.emit('send_fifo', {command:"S"});
-    } else {
-      socket.emit('send_fifo', {command:"P"});
-    }
-
-
-});
-
-socket.on('set_now_playing', function(msg) {
-    console.log("set_now_playing")
-    console.log(msg);
-
-    $("#artist").html(msg.artist);
-    $("#track").html(msg.track);
-    $("#album").html(msg.album);
-
-    $('#coverart').attr("src",msg.image);
-    $('#backgroundcoverart').css('background-image', "url('" + msg.image + "')");
-    $("#stationSelect option").filter(function() {
-        //may want to use $.trim in here
-        return $(this).text() == msg.station;
-    }).prop('selected', true);
-    $("#stationSelect").data("station",msg.station);
-    if(msg.rating > 0){
-      $("#favoriteButton .material-symbols-outlined").removeClass("heart-0").removeClass("heart-1").addClass("heart-1");
-    } else {
-      $("#favoriteButton .material-symbols-outlined").removeClass("heart-0").removeClass("heart-1").addClass("heart-0");
-    }
-});
-
-socket.on('file_event', function(msg) {
-    console.log("file_event")
-    console.log(msg);
-    console.log("msg.nowplaying");
-    console.log(msg.nowplaying);
-    if(msg.nowplaying){
-        socket.emit('get_now_playing');
-    }
+socket.on('updatetrack', function(songinfo) {
+    console.log("updatetrack")
+    console.log(songinfo);
+    setSongInfo(songinfo["trackinfo"])
 });
 
 socket.on('done_loading', function(msg) {
-    console.log("done_loading");
-    console.log(msg);
+  // setSongInfo(msg);
+  // setElapsed();
+  console.log("done_loading");
+  console.log(msg);
 });
 
-socket.on('fifo_successfull', function(msg) {
-    console.log("fifo_successfull");
+
+socket.on('commandsuccessfull', function(msg) {
+    console.log("commandsuccessfull");
     console.log(msg);
     var commandChar = "";
     var commandId = 0;
@@ -465,17 +748,16 @@ socket.on('fifo_successfull', function(msg) {
     switch( commandChar ){
       case "S":
         console.log("pause");
-        $("#playButton").data("mode","play");
-        $("#playButton .material-symbols-outlined").html("play_arrow");
+        $("#buttonPlayPause").data("mode","play");
+        $("#buttonPlayPause .material-symbols-outlined").html("play_arrow");
         break;
       case "P":
         console.log("resume");
-        $("#playButton").data("mode","pause");
-        $("#playButton .material-symbols-outlined").html("pause");
+        $("#buttonPlayPause").data("mode","pause");
+        $("#buttonPlayPause .material-symbols-outlined").html("pause");
         break;
       case "s":
         console.log("change station");
-
       case "+":
         console.log("love track");
         $("#favoriteButton .material-symbols-outlined").removeClass("heart-0").removeClass("heart-1").addClass("heart-1");
@@ -488,19 +770,33 @@ socket.on('fifo_successfull', function(msg) {
     }
 });
 
-/*
-setTimeout(function() {
-    console.log("trying to send file check");
-    socket.emit('check_files', {data:"checkfiles"});
-}, 1000);
-*/
 
 $(document).ready(function() {
+  // set up timer to update progressbar
   setInterval(function() {
-      // console.log("trying to send file check");
-      socket.emit('check_for_updates', {data:"check_for_updates"});
-  }, 2000);
-});
+    socket.emit('getprogress', {data:"getprogress"});
+  }, 1000 );
 
+  // set up timer to operate text scrolling, if necessary
+  setInterval(function() {
+    scrollTitle('artist');
+    scrollTitle('track');
+    scrollTitle('album');  
+  }, 5000 );
+
+  /* 
+    give the fonts a second to load when page is initially created
+    so that the calculated widths of text fields are accurate
+    SHOULD ONLY RUN ONCE!
+  */
+  setTimeout(function() {
+    console.log("one ping only, vasili");
+    checkTextWidth('artist');
+    checkTextWidth('track');
+    checkTextWidth('album');
+    $('.controls.loading').removeClass('loading');
+  }, 500);
+
+});
 </script>
 </html>
