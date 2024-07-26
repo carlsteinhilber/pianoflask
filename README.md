@@ -110,7 +110,11 @@ sudo apt install git
 git clone https://github.com/carlsteinhilber/pianoflask.git`
 ```
 - You can pull the zip file down to your Pi, and then unzip the files into a new pianoflask directory
-
+```
+wget https://github.com/carlsteinhilber/pianoflask/archive/refs/heads/main.zip
+mkdir pianoflask
+unzip main.zip  && mv pianoflask-main/* pianoflask
+```
 
 ## Hook PianoFlask up to PianoBar
 
