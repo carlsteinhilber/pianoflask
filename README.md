@@ -1,6 +1,10 @@
 # PianoFlask
 A lightweight, flask-based UI for pianobar
 
+
+# UPDATE: 2026/06/24
+- I've added some additional routes to the Flask app as REST endpoints to enable full control via home automation calls
+
 # UPDATE: 2024/07/26
 - I've migrated the backend event system to Python so that events can bubble up through the websockets, making the web interface more responsive and stable.
 - I've also added track duration and elapsed time, and given the web interface a general overhaul
