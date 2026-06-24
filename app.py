@@ -20,7 +20,7 @@ async_mode = None
 
 # Init the server
 app = Flask(__name__,
-        static_url_path='', 
+        static_url_path='',
         static_folder='static',
         template_folder='templates')
 
@@ -138,7 +138,7 @@ class Pianobar:
         self.track["elapsedtime"] = time.time() - self.track["info"]["started"]
 
         return self.running
-        
+
     def getEmptyTrackInfo(self):
         return {
                 "artist": "Unknown",
@@ -162,7 +162,7 @@ class Pianobar:
         duration = self.track["duration"]
         if elapsedTime > duration:
             elapsedTime = duration
-        progress = {            
+        progress = {
             "elapsed" : secondsToTimeString(elapsedTime),
             "elapsedSec" : int(elapsedTime),
             "duration" : secondsToTimeString(duration),
@@ -181,7 +181,7 @@ class Pianobar:
         if self.running and not self.paused:
             self.track["elapsedtime"] = (time.time() - self.track["starttime"]) - self.track["pausedtime"]
         return self.track["elapsedtime"]
-    
+
     def getTrackInfo(self):
         return self.track["info"]
 
@@ -206,7 +206,7 @@ class Pianobar:
                 self.paused = False
                 return True
         return False
-    
+
     def readNowPlaying(self):
         trackInfo = self.getEmptyTrackInfo()
         try:
@@ -233,8 +233,8 @@ class Pianobar:
             print("Could not read stationlist data")
             print(error)
 
-        return stationsInfo        
-    
+        return stationsInfo
+
     def setTrackInfo(self,trackinfo):
 
         self.track["info"] = trackinfo
@@ -249,9 +249,9 @@ class Pianobar:
         self.track["elapsedtime"] = 0
 
 
-        
+
         return trackinfo
-    
+
     def songban(self):
         if self.running:
             if self.writeFifo(command = '-'):
@@ -286,7 +286,7 @@ class Pianobar:
     def writeFifo(self, command):
         #Write a command to the pianobar FIFO
         fifoSuccess = False
-        
+
         if self.running:
             debug_log("sending FIFO command: " + command)
             try:
@@ -296,69 +296,127 @@ class Pianobar:
                 fifoSuccess = True
             except:
                 print("could not send command to ctl fifo")
-        
+
         return fifoSuccess
 
 
 def updateProgressBar():
     socketio.emit('updateprogress', pianobar.getProgress())
-#     threading.Timer(1, updateProgressBar).start()
 
 pianobar = Pianobar()
 pianobar.start()
 
-@socketio.on('pause')   
+
+# ---------------------------------------------------------------------------
+# REST API  (consumed by PyXantech5 / PandoraSource in streaming.py)
+# ---------------------------------------------------------------------------
+# All endpoints return JSON.  Duration and position are in seconds; the
+# PyXantech5 client multiplies by 1000 to convert to milliseconds.
+
+@app.route('/status')
+def api_status():
+    """Current playback state — polled every 5 s by PyXantech5."""
+    info = pianobar.getTrackInfo()
+    return jsonify({
+        "title":        info.get("title", ""),
+        "artist":       info.get("artist", ""),
+        "album":        info.get("album", ""),
+        "stationName":  info.get("stationName", ""),
+        "playing":      not pianobar.isPaused(),
+        "coverArt":     info.get("coverArt", ""),
+        "songDuration": int(pianobar.getTrackDuration()),
+        "songPlayed":   int(pianobar.getTrackElapsedTime()),
+    })
+
+
+@app.route('/playpause', methods=['POST'])
+def api_playpause():
+    """Toggle play/pause."""
+    if pianobar.isPaused():
+        pianobar.resume()
+    else:
+        pianobar.pause()
+    return jsonify({"ok": True})
+
+
+@app.route('/next', methods=['POST'])
+def api_next():
+    """Skip to the next track."""
+    pianobar.songnext()
+    return jsonify({"ok": True})
+
+
+@app.route('/stations')
+def api_stations():
+    """Return the full station list.
+    Station IDs are the 0-based index numbers pianobar uses in its FIFO
+    protocol (s0, s1, s2 …), so the client can pass them straight back
+    to /station without any translation."""
+    return jsonify({"stations": pianobar.getStationList()})
+
+
+@app.route('/station', methods=['POST'])
+def api_station():
+    """Change the active station.
+    Expects JSON body: {"id": <index>} or {"stationId": <index>}"""
+    data = request.get_json(silent=True) or {}
+    station_id = data.get("id", data.get("stationId", 0))
+    pianobar.stationchange(station_id)
+    return jsonify({"ok": True})
+
+
+# ---------------------------------------------------------------------------
+# Existing Socket.IO events (unchanged)
+# ---------------------------------------------------------------------------
+
+@socketio.on('pause')
 def songpause_received(data):
-    if pianobar.pause():   
-        emit('commandsuccessfull', data, broadcast=True)
-    
-@socketio.on('resume')   
-def songresume_received(data):
-    if pianobar.resume():   
+    if pianobar.pause():
         emit('commandsuccessfull', data, broadcast=True)
 
-@socketio.on('songban')   
+@socketio.on('resume')
+def songresume_received(data):
+    if pianobar.resume():
+        emit('commandsuccessfull', data, broadcast=True)
+
+@socketio.on('songban')
 def songban_received(data):
     if pianobar.songban():
         emit('commandsuccessfull', data, broadcast=True)
 
-@socketio.on('songlove')   
+@socketio.on('songlove')
 def songban_received(data):
-    if pianobar.songlove(): 
-        emit('commandsuccessfull', data, broadcast=True)    
+    if pianobar.songlove():
+        emit('commandsuccessfull', data, broadcast=True)
 
-@socketio.on('songnext')   
+@socketio.on('songnext')
 def songnext_received(data):
     if pianobar.songnext():
         emit('commandsuccessfull', data, broadcast=True)
-    
-@socketio.on('songtired')   
+
+@socketio.on('songtired')
 def songban_received(data):
-    if pianobar.songtired():   
+    if pianobar.songtired():
         emit('commandsuccessfull', data, broadcast=True)
 
-@socketio.on('stationchange')   
+@socketio.on('stationchange')
 def stationchange_received(data):
-    if pianobar.stationchange(data["id"]):   
+    if pianobar.stationchange(data["id"]):
         emit('commandsuccessfull', data, broadcast=True)
 
-    
-
-# threading.Timer(1, updateProgressBar).start()
-@socketio.on('getprogress')   
+@socketio.on('getprogress')
 def getprogress_received(data):
     socketio.emit('updateprogress', pianobar.getProgress())
 
-
 # Receive a message from the front end HTML
-@socketio.on('send_message')   
+@socketio.on('send_message')
 def message_received(data):
     print(data['text'])
     emit('message_from_server', {'text':data['text']}, broadcast=True)
 
-@socketio.on('trackchanged')   
+@socketio.on('trackchanged')
 def updatesong_received(data):
-    pianobar.setTrackInfo(data["trackinfo"])   
+    pianobar.setTrackInfo(data["trackinfo"])
     emit('updatetrack', data, broadcast=True)
 
 @app.route('/images/<path:path>')
@@ -369,18 +427,11 @@ def send_image(path):
 def index():
     debug_log("/")
     time.sleep(1)
-    
+
     isRunning = pianobar.isRunning()
     isPaused = pianobar.isPaused()
 
     if isRunning:
-    
-        # nowPlaying = pianobar.getNowPlaying()
-        # stations = pianobar.getStations()
-
-        # print(nowPlaying)
-
-
         return render_template('pianoflask.html',
             pianobarrunning = isRunning,
             pianobarpaused = isPaused,
@@ -396,4 +447,4 @@ def index():
 
 # Actually Start the App
 if __name__ == '__main__':
-    socketio.run(app, debug=False,host='0.0.0.0')
+    socketio.run(app, debug=False, host='0.0.0.0')
